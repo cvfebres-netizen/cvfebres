@@ -14,7 +14,7 @@ Website moderno, responsivo e de **página única** para o
 | Cinza | `#626666` |
 | Fundo claro | `#f8ffff` |
 | Turquesa claro | `#99d9e1` |
-| Complementar (laranja) | `#ff9d6e` |
+| Complementar (bege quente, Pantone 719 C) | `#edc8a3` |
 | Fonte principal | Satoshi (fallback: system sans-serif) |
 | Fonte alternativa | Merriweather (serif) |
 

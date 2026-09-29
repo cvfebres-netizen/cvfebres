@@ -1,27 +1,32 @@
-/* ============================================================
+  /* ============================================================
    CVF — Centro Veterinário de Febres
    Stylesheet baseado no Manual da Marca CVF
+   Tema escuro teal (fundo escuro + paleta oficial da marca)
    ============================================================ */
 
 :root {
-  /* Cores da marca */
-  --turquesa: #00a1b4;
-  --teal: #004649;
-  --texto: #1a1c1c;
-  --cinza: #626666;
-  --fundo: #f8ffff;
-  --turquesa-claro: #99d9e1;
-  --acc-laranja: #ff9d6e;
+  /* Cores da marca (Manual da Marca CVF) */
+  --turquesa: #00a1b4;          /* Pantone Bluebird 16-4834 TPG */
+  --turquesa-claro: #99d9e1;    /* var. clara */
+  --teal: #004649;              /* verde-escuro teal */
+  --teal-escuro: #03211f;       /* fundo mais escuro */
+  --teal-card: #0a2f30;          /* superfícies / cartões */
+  --teal-card-2: #124142;        /* superfícies alternadas */
+  --texto: #d9f2f4;             /* texto principal (claro) */
+  --cinza: #a7cdd0;             /* texto secundário */
+--fundo: #062a2b;             /* fundo do site (teal escuro) */
+  --complementar: #edc8a3;      /* Complementar Pantone 719 C (manual da marca) */
   --branco: #ffffff;
 
-  /* Tipografia */
+  /* Tipografia (Manual da Marca CVF) */
   --font-main: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI',
     Roboto, Helvetica, Arial, sans-serif;
   --font-serif: 'Merriweather', Georgia, 'Times New Roman', serif;
 
   /* Layout */
   --radius: 18px;
-  --shadow: 0 10px 30px rgba(0, 70, 73, 0.08);
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.25);
   --transition: 0.3s ease;
 }
 
@@ -36,18 +41,19 @@ html {
 }
 
 /* ============================================================
-   Página única com efeito de "mudança de página" (scroll-snap)
+   Página de scroll + indicador de progresso
    ============================================================ */
-/* Indicador de progresso / página atual */
 .scroll-progress {
   position: fixed;
   top: 0;
   left: 0;
   height: 3px;
-  background: linear-gradient(90deg, var(--turquesa), var(--acc-laranja));
+  background: linear-gradient(90deg, var(--turquesa), var(--complementar));
   z-index: 300;
-  width: 0%;
-  transition: width 0.1s ease;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left center;
+  /* will-change removido: deve ser temporário e cirúrgico (fixing-motion-performance) */
 }
 
 /* Dots de navegação lateral */
@@ -66,7 +72,7 @@ html {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: var(--turquesa-claro);
+  background: var(--teal-card-2);
   border: 2px solid var(--turquesa);
   transition: all 0.3s ease;
   display: block;
@@ -79,7 +85,7 @@ html {
 .scroll-dots a.active {
   background: var(--turquesa);
   transform: scale(1.3);
-  box-shadow: 0 0 0 4px rgba(0, 161, 180, 0.2);
+  box-shadow: 0 0 0 4px rgba(0, 161, 180, 0.25);
 }
 
 /* Ajuste para o header fixo — âncoras alinhadas abaixo do header */
@@ -116,6 +122,13 @@ a {
   color: inherit;
 }
 
+/* Foco visível para acessibilidade por teclado */
+:focus-visible {
+  outline: 3px solid var(--turquesa);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 .container {
   width: 100%;
   max-width: 1200px;
@@ -125,8 +138,8 @@ a {
 
 /* ---------- Top bar (contactos) ---------- */
 .topbar {
-  background: var(--teal);
-  color: var(--fundo);
+  background: var(--teal-escuro);
+  color: var(--texto);
   font-size: 0.85rem;
   padding: 8px 0;
 }
@@ -145,7 +158,7 @@ a {
 }
 
 .topbar a:hover {
-  color: var(--acc-laranja);
+  color: var(--complementar);
 }
 
 .topbar-left,
@@ -176,28 +189,60 @@ a {
 }
 
 .social-link:hover {
-  background: var(--acc-laranja);
-  color: var(--teal);
+  background: var(--complementar);
+  color: var(--teal-escuro);
   transform: translateY(-3px);
 }
 
 .social-link.footer {
-  background: rgba(248, 255, 255, 0.15);
+  background: rgba(217, 242, 244, 0.12);
   color: var(--turquesa-claro);
 }
 
 .social-link.footer:hover {
-  background: var(--acc-laranja);
-  color: var(--teal);
+  background: var(--complementar);
+  color: var(--teal-escuro);
+}
+
+/* ---------- Links externos (abrem em nova janela) ---------- */
+a[target="_blank"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+a[target="_blank"]:not(.btn):not(.social-link)::after {
+  content: '↗';
+  font-size: 0.85em;
+  opacity: 0.85;
+  transition: opacity var(--transition);
+}
+
+a[target="_blank"]:not(.btn):not(.social-link):hover::after {
+  opacity: 1;
+}
+
+/* Botão "Abrir calendário em nova janela" */
+.btn-external {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-external svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
 }
 
 /* ---------- Header / Nav ---------- */
 .header {
-  background: var(--branco);
-  box-shadow: var(--shadow);
+  background: var(--teal-card);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
   position: sticky;
   top: 0;
   z-index: 100;
+  border-bottom: 1px solid rgba(153, 217, 225, 0.1);
 }
 
 .nav {
@@ -226,7 +271,7 @@ a {
 
 .brand-text strong {
   font-size: 1.25rem;
-  color: var(--teal);
+  color: var(--turquesa-claro);
   letter-spacing: 0.5px;
 }
 
@@ -246,7 +291,7 @@ a {
 
 .nav-links a {
   font-weight: 500;
-  color: var(--teal);
+  color: var(--texto);
   position: relative;
   padding: 4px 0;
   transition: color var(--transition);
@@ -292,20 +337,21 @@ a {
 }
 
 .btn-primary:hover {
-  background: var(--teal);
+  background: var(--turquesa-claro);
+  color: var(--teal-escuro);
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(0, 161, 180, 0.35);
 }
 
 .btn-accent {
-  background: var(--acc-laranja);
-  color: var(--teal);
+  background: var(--complementar);
+  color: var(--teal-escuro);
 }
 
 .btn-accent:hover {
-  background: #ff8a4d;
+  background: #f0d7b8;
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(255, 157, 110, 0.4);
+  box-shadow: 0 8px 20px rgba(237, 200, 163, 0.4);
 }
 
 .btn-outline {
@@ -339,7 +385,7 @@ a {
 .hamburger span {
   width: 26px;
   height: 3px;
-  background: var(--teal);
+  background: var(--turquesa-claro);
   border-radius: 3px;
   transition: var(--transition);
 }
@@ -347,7 +393,9 @@ a {
 /* ---------- Hero ---------- */
 .hero {
   position: relative;
-  background: linear-gradient(135deg, var(--fundo) 0%, var(--turquesa-claro) 100%);
+  background:
+    radial-gradient(circle at 85% 15%, rgba(0, 161, 180, 0.18), transparent 45%),
+    linear-gradient(135deg, #0d3a3d 0%, var(--fundo) 100%);
   overflow: hidden;
   padding: 80px 0;
 }
@@ -375,7 +423,7 @@ a {
 
 .hero h1 {
   font-size: clamp(2.2rem, 5vw, 3.6rem);
-  color: var(--teal);
+  color: var(--branco);
   line-height: 1.1;
   font-weight: 800;
   margin-bottom: 18px;
@@ -383,6 +431,12 @@ a {
 
 .hero h1 .highlight {
   color: var(--turquesa);
+}
+
+.hero h1 .typewriter {
+  color: var(--turquesa-claro);
+  border-bottom: 3px solid var(--complementar);
+  padding-bottom: 2px;
 }
 
 .hero p {
@@ -427,7 +481,8 @@ a {
 }
 
 .hero-card {
-  background: var(--branco);
+  background: var(--teal-card);
+  border: 1px solid rgba(153, 217, 225, 0.18);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
   padding: 32px;
@@ -441,7 +496,7 @@ a {
 }
 
 .hero-card h3 {
-  color: var(--teal);
+  color: var(--turquesa-claro);
   margin-bottom: 6px;
 }
 
@@ -471,7 +526,7 @@ a {
 }
 
 .section-alt {
-  background: var(--branco);
+  background: var(--teal-card);
 }
 
 .section-head {
@@ -491,56 +546,116 @@ a {
 
 .section-head h2 {
   font-size: clamp(1.8rem, 4vw, 2.6rem);
-  color: var(--teal);
+  color: var(--branco);
   margin-bottom: 14px;
+  font-family: var(--font-serif);
+  font-weight: 700;
 }
 
 .section-head p {
   color: var(--cinza);
 }
 
-/* ---------- Valores ---------- */
-.values-grid {
+/* ---------- Sobre / split ---------- */
+.split {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 48px;
+  align-items: center;
 }
 
-.value-card {
-  background: var(--fundo);
+.split-media {
+  position: relative;
+}
+
+.about-card {
+  background: var(--teal-card);
+  border: 1px solid rgba(153, 217, 225, 0.18);
+  border-top: 4px solid var(--turquesa);
   border-radius: var(--radius);
   padding: 32px;
-  border: 1px solid var(--turquesa-claro);
+  box-shadow: var(--shadow-soft);
+}
+
+.about-emoji {
+  font-size: 2.4rem;
+  margin-bottom: 14px;
+}
+
+.about-card h3 {
+  color: var(--branco);
+  margin-bottom: 10px;
+  font-family: var(--font-serif);
+  font-weight: 700;
+}
+
+.about-card p {
+  color: var(--cinza);
+  font-size: 0.98rem;
+}
+
+.split-content h2 {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  color: var(--branco);
+  margin-bottom: 14px;
+  font-family: var(--font-serif);
+  font-weight: 700;
+}
+
+.split-content h2 b {
+  color: var(--turquesa);
+}
+
+.split-content > p {
+  color: var(--cinza);
+  margin-bottom: 24px;
+}
+
+.values-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.value-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  background: var(--teal-card);
+  border: 1px solid rgba(153, 217, 225, 0.15);
+  border-radius: var(--radius);
+  padding: 18px;
   transition: var(--transition);
 }
 
-.value-card:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow);
+.value-item:hover {
   border-color: var(--turquesa);
+  transform: translateX(4px);
 }
 
 .value-icon {
-  width: 56px;
-  height: 56px;
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
   border-radius: 14px;
   background: var(--turquesa);
   color: var(--branco);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.6rem;
-  margin-bottom: 18px;
+  font-size: 1.5rem;
 }
 
-.value-card h3 {
-  color: var(--teal);
-  margin-bottom: 10px;
+.value-item h4 {
+  color: var(--turquesa-claro);
+  margin-bottom: 4px;
+  font-family: var(--font-serif);
+  font-weight: 700;
 }
 
-.value-card p {
+.value-item p {
   color: var(--cinza);
-  font-size: 0.95rem;
+  font-size: 0.92rem;
 }
 
 /* ---------- Serviços ---------- */
@@ -551,16 +666,18 @@ a {
 }
 
 .service-card {
-  background: var(--branco);
+  background: var(--teal-card-2);
+  border: 1px solid rgba(153, 217, 225, 0.12);
   border-radius: var(--radius);
   padding: 30px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-soft);
   border-top: 4px solid var(--turquesa);
   transition: var(--transition);
 }
 
 .service-card:hover {
   transform: translateY(-6px);
+  border-color: var(--turquesa);
 }
 
 .service-card .icon {
@@ -569,8 +686,10 @@ a {
 }
 
 .service-card h3 {
-  color: var(--teal);
+  color: var(--branco);
   margin-bottom: 8px;
+  font-family: var(--font-serif);
+  font-weight: 700;
 }
 
 .service-card p {
@@ -578,24 +697,64 @@ a {
   font-size: 0.95rem;
 }
 
+/* ---------- Porquê a CVF ---------- */
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.why-card {
+  background: var(--teal-card);
+  border: 1px solid rgba(153, 217, 225, 0.15);
+  border-radius: var(--radius);
+  padding: 28px;
+  text-align: center;
+  transition: var(--transition);
+}
+
+.why-card:hover {
+  transform: translateY(-6px);
+  border-color: var(--turquesa);
+  box-shadow: var(--shadow-soft);
+}
+
+.why-icon {
+  font-size: 2.2rem;
+  margin-bottom: 14px;
+}
+
+.why-card h3 {
+  color: var(--branco);
+  margin-bottom: 8px;
+  font-family: var(--font-serif);
+  font-weight: 700;
+}
+
+.why-card p {
+  color: var(--cinza);
+  font-size: 0.92rem;
+}
+
 /* ---------- Equipa ---------- */
 .team-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 24px;
 }
 
 .team-card {
-  background: var(--fundo);
+  background: var(--teal-card);
+  border: 1px solid rgba(153, 217, 225, 0.15);
   border-radius: var(--radius);
   padding: 30px;
   text-align: center;
-  border: 1px solid var(--turquesa-claro);
   transition: var(--transition);
 }
 
 .team-card:hover {
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-soft);
+  border-color: var(--turquesa);
 }
 
 .team-photo {
@@ -603,7 +762,7 @@ a {
   height: 120px;
   border-radius: 50%;
   background: var(--turquesa-claro);
-  color: var(--teal);
+  color: var(--teal-escuro);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -626,11 +785,13 @@ a {
   justify-content: center;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, var(--turquesa-claro), var(--fundo));
+  background: linear-gradient(135deg, var(--turquesa-claro), var(--teal-card-2));
 }
 
 .team-card h3 {
-  color: var(--teal);
+  color: var(--branco);
+  font-family: var(--font-serif);
+  font-weight: 700;
 }
 
 .team-card .role {
@@ -662,7 +823,7 @@ a {
 }
 
 .cta-band p {
-  opacity: 0.9;
+  opacity: 0.92;
   margin-bottom: 26px;
   max-width: 600px;
   margin-left: auto;
@@ -708,7 +869,7 @@ a {
 }
 
 .contact-item h4 {
-  color: var(--teal);
+  color: var(--turquesa-claro);
   margin-bottom: 2px;
 }
 
@@ -723,32 +884,48 @@ a {
 
 /* Urgência junto ao telefone */
 .contact-item.emergency {
-  background: linear-gradient(135deg, rgba(255, 157, 110, 0.15), rgba(0, 161, 180, 0.1));
-  border: 1px solid var(--acc-laranja);
+  background: linear-gradient(135deg, rgba(237, 200, 163, 0.16), rgba(0, 161, 180, 0.1));
+  border: 1px solid var(--complementar);
   border-radius: var(--radius);
   padding: 16px;
 }
 
 .contact-item.emergency .ci-icon {
-  background: var(--acc-laranja);
-  color: var(--teal);
+  background: var(--complementar);
+  color: var(--teal-escuro);
 }
 
 .contact-item.emergency h4 {
-  color: var(--acc-laranja);
+  color: var(--complementar);
 }
 
 .contact-item.emergency .phone-big {
   font-size: 1.4rem;
   font-weight: 700;
-  color: var(--teal);
+  color: var(--branco);
 }
 
 .contact-form {
-  background: var(--branco);
+  background: var(--teal-card);
+  border: 1px solid rgba(153, 217, 225, 0.15);
   border-radius: var(--radius);
   padding: 32px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-soft);
+}
+
+/* Cabeçalho do formulário de contacto (sem estilos inline) */
+.contact-form h3 {
+  color: var(--turquesa-claro);
+  margin-bottom: 8px;
+  font-size: 1.4rem;
+  font-family: var(--font-serif);
+  font-weight: 700;
+}
+
+.contact-form .contact-form-intro {
+  color: var(--cinza);
+  font-size: 0.9rem;
+  margin-bottom: 24px;
 }
 
 .form-group {
@@ -758,7 +935,7 @@ a {
 .form-group label {
   display: block;
   font-weight: 600;
-  color: var(--teal);
+  color: var(--turquesa-claro);
   margin-bottom: 6px;
   font-size: 0.9rem;
 }
@@ -768,12 +945,12 @@ a {
 .form-group textarea {
   width: 100%;
   padding: 12px 14px;
-  border: 1.5px solid var(--turquesa-claro);
+  border: 1.5px solid rgba(153, 217, 225, 0.25);
   border-radius: 10px;
   font-family: var(--font-main);
   font-size: 0.95rem;
   color: var(--texto);
-  background: var(--fundo);
+  background: var(--teal-card-2);
   transition: border-color var(--transition);
 }
 
@@ -795,10 +972,125 @@ a {
   margin-top: 6px;
 }
 
+/* ---------- Marcação / Google Calendar embed ---------- */
+.booking-wrap {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 32px;
+  align-items: start;
+  background: var(--teal);
+  border: 1px solid rgba(153, 217, 225, 0.25);
+  border-radius: var(--radius);
+  padding: 32px;
+  box-shadow: var(--shadow-soft);
+}
+
+/* Cartão de informação com superfície própria para dar contraste ao texto */
+.booking-info {
+  background: var(--teal-card);
+  border: 1px solid rgba(153, 217, 225, 0.18);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow-soft);
+}
+
+.booking-info h3 {
+  color: var(--turquesa-claro);
+  margin-bottom: 12px;
+  font-family: var(--font-serif);
+  font-weight: 700;
+}
+
+.booking-info p {
+  color: var(--cinza);
+  font-size: 0.95rem;
+  margin-bottom: 16px;
+}
+
+.booking-info ul {
+  list-style: none;
+  margin-bottom: 24px;
+}
+
+.booking-info ul li {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(153, 217, 225, 0.2);
+  color: var(--branco);
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.booking-calendar {
+  background: var(--teal-card);
+  border-radius: 12px;
+  overflow: hidden;
+  padding: 10px;
+  border: 1px solid rgba(153, 217, 225, 0.25);
+}
+
+.booking-calendar iframe,
+.contact-form-embed iframe {
+  display: block;
+  width: 100%;
+  border: 0;
+  border-radius: 8px;
+  background: var(--branco);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* Feedback do utilizador: embeds devem adaptar-se ao espaço.
+   Alturas contidas para não dominarem a página e manterem
+   o alinhamento com o tema escuro das secções. */
+.booking-calendar iframe {
+  height: clamp(480px, 68vh, 760px);
+  min-height: 440px;
+}
+
+.contact-form-embed iframe {
+  height: clamp(420px, 60vh, 680px);
+  min-height: 400px;
+}
+
+.form-embed-note {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  color: var(--cinza);
+  text-align: center;
+}
+
+/* Moldura do formulário de contacto para integrar o embed branco
+   de forma limpa e equilibrada frente ao tema escuro. */
+.contact-form-embed {
+  margin-top: 12px;
+  background: var(--teal-card-2);
+  border: 1px solid rgba(153, 217, 225, 0.25);
+  border-radius: 12px;
+  padding: 10px;
+  overflow: hidden;
+}
+
+/* Mapa embebido */
+.map-embed {
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.map-embed iframe {
+  display: block;
+  width: 100%;
+  border: 0;
+}
+
+.placeholder-link {
+  pointer-events: none;
+  opacity: 0.6;
+}
+
 /* ---------- Footer ---------- */
 .footer {
-  background: var(--teal);
-  color: var(--fundo);
+  background: var(--teal-escuro);
+  color: var(--texto);
   padding: 50px 0 0;
 }
 
@@ -811,19 +1103,18 @@ a {
 
 .footer-brand img {
   height: 40px;
-  filter: brightness(0) invert(1);
   margin-bottom: 14px;
 }
 
 .footer-brand p {
-  color: var(--turquesa-claro);
+  color: var(--cinza);
   font-size: 0.9rem;
   max-width: 320px;
 }
 
 .footer h4 {
   margin-bottom: 16px;
-  color: var(--branco);
+  color: var(--turquesa-claro);
 }
 
 .footer ul {
@@ -835,24 +1126,24 @@ a {
 }
 
 .footer ul a {
-  color: var(--turquesa-claro);
+  color: var(--cinza);
   transition: color var(--transition);
 }
 
 .footer ul a:hover {
-  color: var(--acc-laranja);
+  color: var(--complementar);
 }
 
 .footer-bottom {
-  border-top: 1px solid rgba(248, 255, 255, 0.15);
+  border-top: 1px solid rgba(217, 242, 244, 0.12);
   padding: 20px 0;
   text-align: center;
   font-size: 0.85rem;
-  color: var(--turquesa-claro);
+  color: var(--cinza);
 }
 
 .footer-bottom a {
-  color: var(--acc-laranja);
+  color: var(--complementar);
 }
 
 /* ---------- Ortopedia & Implantologia ---------- */
@@ -870,7 +1161,7 @@ a {
   position: absolute;
   width: 320px;
   height: 320px;
-  background: var(--acc-laranja);
+  background: var(--complementar);
   border-radius: 50%;
   filter: blur(80px);
   opacity: 0.25;
@@ -900,8 +1191,8 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--acc-laranja);
-  color: var(--teal);
+  background: var(--complementar);
+  color: var(--teal-escuro);
   padding: 6px 18px;
   border-radius: 50px;
   font-weight: 700;
@@ -918,7 +1209,7 @@ a {
 }
 
 .ortho-hero h1 span {
-  color: var(--acc-laranja);
+  color: var(--complementar);
 }
 
 .ortho-hero p {
@@ -935,19 +1226,20 @@ a {
 }
 
 .ortho-card {
-  background: var(--branco);
+  background: var(--teal-card-2);
+  border: 1px solid rgba(153, 217, 225, 0.12);
   border-radius: var(--radius);
   padding: 28px;
   text-align: center;
-  box-shadow: var(--shadow);
-  border-top: 4px solid var(--acc-laranja);
+  box-shadow: var(--shadow-soft);
+  border-top: 4px solid var(--complementar);
   transition: var(--transition);
 }
 
 .ortho-card:hover {
   transform: translateY(-8px);
   border-top-color: var(--turquesa);
-  box-shadow: 0 16px 40px rgba(0, 70, 73, 0.15);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
 }
 
 .ortho-icon {
@@ -964,7 +1256,7 @@ a {
 }
 
 .ortho-card h3 {
-  color: var(--teal);
+  color: var(--branco);
   margin-bottom: 8px;
 }
 
@@ -975,7 +1267,7 @@ a {
 
 /* ---------- Page hero (subpages) ---------- */
 .page-hero {
-  background: linear-gradient(135deg, var(--fundo), var(--turquesa-claro));
+  background: linear-gradient(135deg, var(--teal-card), var(--teal-card-2));
   padding: 60px 0;
   text-align: center;
 }
@@ -991,7 +1283,7 @@ a {
 
 .page-hero h1 {
   font-size: clamp(2rem, 4vw, 3rem);
-  color: var(--teal);
+  color: var(--branco);
 }
 
 .page-hero p {
@@ -1013,16 +1305,24 @@ a {
 }
 
 /* ---------- Responsive ---------- */
-@media (max-width: 900px) {
-  .values-grid,
-  .services-grid,
-  .team-grid,
+@media (max-width: 1000px) {
+  .why-grid,
   .ortho-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+}
 
+@media (max-width: 900px) {
+  .values-grid,
+  .services-grid,
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .split,
   .hero .container,
-  .contact-grid {
+  .contact-grid,
+  .booking-wrap {
     grid-template-columns: 1fr;
   }
 
@@ -1036,7 +1336,7 @@ a {
     right: -100%;
     height: 100vh;
     width: 280px;
-    background: var(--branco);
+    background: var(--teal-card);
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
@@ -1045,6 +1345,7 @@ a {
     box-shadow: var(--shadow);
     transition: right 0.4s ease;
     z-index: 200;
+    border-left: 1px solid rgba(153, 217, 225, 0.15);
   }
 
   .nav-links.open {
@@ -1065,6 +1366,7 @@ a {
   .values-grid,
   .services-grid,
   .team-grid,
+  .why-grid,
   .ortho-grid,
   .footer-grid {
     grid-template-columns: 1fr;
@@ -1088,5 +1390,74 @@ a {
 
   .contact-item.emergency .phone-big {
     font-size: 1.15rem;
+  }
+
+/* Mobile-first: marcação e formulários */
+  .booking-wrap,
+  .contact-form {
+    padding: 20px;
+  }
+
+  .booking-info {
+    padding: 18px;
+  }
+
+.booking-calendar iframe {
+    height: clamp(460px, 72vh, 720px);
+    min-height: 420px;
+  }
+
+  .contact-form-embed iframe {
+    height: clamp(400px, 60vh, 640px);
+    min-height: 380px;
+  }
+
+  .section {
+    padding: 50px 0;
+  }
+
+  .section-head {
+    margin-bottom: 32px;
+  }
+
+  .btn {
+    padding: 12px 20px;
+    font-size: 0.9rem;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .footer {
+    padding-bottom: 20px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}
+
+/* Safe-area insets para iOS (notch) */
+@supports (padding: max(0px)) {
+  .topbar {
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+  .footer {
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+  }
+}
+
+/* Respeitar preferência de movimento reduzido */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .scroll-progress {
+    transition: none;
   }
 }

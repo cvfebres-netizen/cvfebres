@@ -8,19 +8,39 @@ document.addEventListener('DOMContentLoaded', () => {
   const hamburger = document.querySelector('.hamburger');
   const navLinks = document.querySelector('.nav-links');
 
-  if (hamburger && navLinks) {
+if (hamburger && navLinks) {
+    const closeMenu = () => {
+      navLinks.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    };
+
+    const openMenu = () => {
+      navLinks.classList.add('open');
+      hamburger.setAttribute('aria-expanded', 'true');
+      document.body.style.overflow = 'hidden';
+    };
+
     hamburger.addEventListener('click', () => {
-      navLinks.classList.toggle('open');
       const isOpen = navLinks.classList.contains('open');
-      hamburger.setAttribute('aria-expanded', isOpen);
+      if (isOpen) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
     });
 
-    // Fechar menu ao clicar num link
+    // Fechar ao clicar num link
     navLinks.querySelectorAll('a').forEach((link) => {
-      link.addEventListener('click', () => {
-        navLinks.classList.remove('open');
-        hamburger.setAttribute('aria-expanded', 'false');
-      });
+      link.addEventListener('click', closeMenu);
+    });
+
+    // Fechar com a tecla Escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && navLinks.classList.contains('open')) {
+        closeMenu();
+        hamburger.focus();
+      }
     });
   }
 
@@ -50,9 +70,20 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ------------------------------------------------------------
      Dots de navegação lateral
      ------------------------------------------------------------ */
-  const dotsContainer = document.querySelector('#scroll-dots');
+const dotsContainer = document.querySelector('#scroll-dots');
   const sections = document.querySelectorAll('section[id]');
   const navAnchors = document.querySelectorAll('.nav-links a[href^="#"]');
+
+  // Rótulos legíveis em PT para os indicadores laterais (acessibilidade)
+  const sectionLabels = {
+    inicio: 'Início',
+    sobre: 'Sobre',
+    servicos: 'Serviços',
+    equipa: 'Equipa',
+    marcacao: 'Marcação',
+    contactos: 'Contactos',
+    diferencas: 'O que nos diferencia'
+  };
 
   if (dotsContainer && sections.length) {
     sections.forEach((sec) => {
@@ -60,7 +91,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const dot = document.createElement('a');
       dot.classList.add('dot');
       dot.href = '#' + id;
-      dot.setAttribute('aria-label', id);
+      dot.setAttribute('aria-label', sectionLabels[id] || id);
+      dot.title = sectionLabels[id] || id;
       dot.addEventListener('click', (e) => {
         e.preventDefault();
         const top = sec.getBoundingClientRect().top + window.pageYOffset - headerOffset;
@@ -96,16 +128,16 @@ document.addEventListener('DOMContentLoaded', () => {
     sections.forEach((sec) => observer.observe(sec));
   }
 
-  /* ------------------------------------------------------------
-     Barra de progresso do scroll
+/* ------------------------------------------------------------
+     Barra de progresso do scroll (transform scaleX — GPU friendly)
      ------------------------------------------------------------ */
   const progressBar = document.querySelector('#scroll-progress');
   if (progressBar) {
     const updateProgress = () => {
       const scrolled = window.scrollY;
       const total = document.documentElement.scrollHeight - window.innerHeight;
-      const pct = total > 0 ? (scrolled / total) * 100 : 0;
-      progressBar.style.width = pct + '%';
+      const pct = total > 0 ? scrolled / total : 0;
+      progressBar.style.transform = 'scaleX(' + pct + ')';
     };
     window.addEventListener('scroll', updateProgress, { passive: true });
     updateProgress();
@@ -146,52 +178,48 @@ document.addEventListener('DOMContentLoaded', () => {
     onScroll();
   }
 
-  /* ------------------------------------------------------------
-     Calendário de marcações (lazy-load)
+/* ------------------------------------------------------------
+     Google Forms embeds (marcação + contacto) — lazy-load
      ------------------------------------------------------------ */
-  const bookingFrame = document.querySelector('.booking-calendar iframe[data-src]');
-  if (bookingFrame) {
-    const loadBooking = () => {
-      const src = bookingFrame.getAttribute('data-src');
-      if (src && bookingFrame.getAttribute('src') === 'about:blank') {
-        bookingFrame.setAttribute('src', src);
+  const formFrames = document.querySelectorAll('iframe[data-src]');
+  if (formFrames.length) {
+    const loadFrame = (frame) => {
+      const src = frame.getAttribute('data-src');
+      if (src && frame.getAttribute('src') === 'about:blank') {
+        frame.setAttribute('src', src);
       }
     };
     if ('IntersectionObserver' in window) {
-      const calObserver = new IntersectionObserver(
+      const formObserver = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
-              loadBooking();
-              calObserver.unobserve(entry.target);
+              loadFrame(entry.target);
+              formObserver.unobserve(entry.target);
             }
           });
         },
         { threshold: 0.1 }
       );
-      calObserver.observe(bookingFrame);
+      formFrames.forEach((frame) => formObserver.observe(frame));
     } else {
-      loadBooking();
+      formFrames.forEach((frame) => loadFrame(frame));
     }
   }
 
-  /* ------------------------------------------------------------
-     Formulário de contacto
+/* ------------------------------------------------------------
+     Links "Abrir em nova janela" (marcação / contacto)
      ------------------------------------------------------------ */
-  const form = document.querySelector('#contact-form');
-  if (form) {
-    form.addEventListener('submit', (e) => {
+  const placeholderLinks = document.querySelectorAll('.placeholder-link');
+  placeholderLinks.forEach((link) => {
+    link.addEventListener('click', (e) => {
       e.preventDefault();
-      const formNote = document.getElementById('form-note');
-      if (formNote) {
-        formNote.textContent =
-          'Obrigado! A sua mensagem foi recebida. Em breve entraremos em contacto. (formulário de demonstração — ligação ao backend a configurar)';
-        formNote.style.color = '#00a1b4';
-        formNote.style.fontWeight = '600';
+      const src = link.getAttribute('href');
+      if (src && src !== '#') {
+        window.open(src, '_blank', 'noopener');
       }
-      form.reset();
     });
-  }
+  });
 
   /* ---------- Ano no footer ---------- */
   const yearEl = document.getElementById('year');
